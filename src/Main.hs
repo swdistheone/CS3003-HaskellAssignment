@@ -1,6 +1,6 @@
 module Main where
 
-import Assignment2
+import HaskellAssignment
 
 unit_test :: Eq a => a -> a -> [Char]
 unit_test expected actual | expected == actual = "Pass"
