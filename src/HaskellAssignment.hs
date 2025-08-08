@@ -36,10 +36,11 @@ mergesort cmp xs = merge (mergesort cmp left) (mergesort cmp right)
 ------------------------------------------------
 -- runLengthEncode
 ------------------------------------------------
-data RunLength = Span Int Char deriving (Eq, Show)
+data RunLength = Span Int Char 
+  deriving (Eq, Show)
 
 instance Show RunLength where
-  show (Span n c) = show n ++ " " ++ [c]
+  show (Span n c) = "(span " ++ show n ++ " " ++ show c ++ ")"
 
 runLengthEncode :: String -> [RunLength]
 runLengthEncode = map (\grp -> Span (length grp) (head grp)) . group 
