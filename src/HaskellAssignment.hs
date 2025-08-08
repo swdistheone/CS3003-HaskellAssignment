@@ -1,45 +1,55 @@
 module HaskellAssignment where
- import Data.List (group, sort)
+
+import Data.List (group)
+
 ------------------------------------------------
 -- findFirst
 ------------------------------------------------
-data Found = Match Int | NoMatch deriving Eq
+data Found = Match Int | NoMatch
+  deriving Eq
+
 instance Show Found where
-  show (Match index) = "Found match at " ++ show index
-  show NoMatch = "No match found!"
-findFirst :: Eq a => (a -> Bool) -> [a] -> Found
+  show (Match i) = "Found match at " ++ show i
+  show NoMatch   = "No match found!"
+
+findFirst :: (a -> Bool) -> [a] -> Found
 findFirst p xs = go 0 xs
   where
-    go _ [] = NoMatch
-    go n (x:xs)
-      | p x       = Match n
-      | otherwise = go (n + 1) xs
+    go _ []     = NoMatch
+    go i (y:ys)
+      | p y       = Match i
+      | otherwise = go (i + 1) ys
+
 ------------------------------------------------
 -- palindrome
 ------------------------------------------------
-palindrome :: [Char] -> Bool
-palindrome xs = xs == reverse xs
-------------------------------------------------  
--- mergeSort
-------------------------------------------------  
-mergeSort :: (a -> a -> Bool) -> [a] -> [a]
-mergeSort _ [] = []
-mergeSort _ [x] = [x]
-mergeSort cmp xs = merge (mergeSort cmp left) (mergeSort cmp right)
+palindrome :: String -> Bool
+palindrome s = s == reverse s
+
+------------------------------------------------
+-- mergesort
+------------------------------------------------
+mergesort :: (a -> a -> Bool) -> [a] -> [a]
+mergesort _ []  = []
+mergesort _ [x] = [x]
+mergesort cmp xs =
+  let (l, r) = splitAt (length xs `div` 2) xs
+  in merge (mergesort cmp l) (mergesort cmp r)
   where
-    (left, right) = splitAt (length xs `div` 2) xs
     merge [] ys = ys
     merge xs [] = xs
-    merge (x:xs) (y:ys)
-      | cmp x y   = x : merge xs (y:ys)
-      | otherwise = y : merge (x:xs) ys
+    merge xa@(x:xs') ya@(y:ys')
+      | cmp x y   = x : merge xs' ya
+      | otherwise = y : merge xa ys'
+
 ------------------------------------------------
--- lengthEncode
+-- runLengthEncode
 ------------------------------------------------
-data RunLength = Span Int Char deriving Eq
+data RunLength = Span Int Char
+  deriving Eq
 
 instance Show RunLength where
-  show (Span n c) = show n ++ " " ++ [c]
+  show (Span n c) = "(Span " ++ show n ++ " " ++ show c ++ ")"
 
-lengthEncode :: [Char] -> [RunLength]
-lengthEncode = map (\grp -> Span (length grp) (head grp)) . group . sort
+runLengthEncode :: String -> [RunLength]
+runLengthEncode = map (\grp -> Span (length grp) (head grp)) . group
