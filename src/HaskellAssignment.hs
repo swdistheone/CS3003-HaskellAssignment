@@ -1,13 +1,16 @@
 module HaskellAssignment where
- import Data.List (group)
+  import Data.List (group)
 ------------------------------------------------
 -- findFirst
 ------------------------------------------------
-data Found = Match Int | NoMatch deriving Eq
+data Found = Match Int | NoMatch
+ deriving Eq
+
 instance Show Found where
-  show (Match index) = "Found match at " ++ show index
+  show (Match i) = "Found match at " ++ show i
   show NoMatch = "No match found!"
-findFirst :: Eq a => (a -> Bool) -> [a] -> Found
+
+findFirst :: a => (a -> Bool) -> [a] -> Found
 findFirst p xs = go 0 xs
   where
     go _ [] = NoMatch
@@ -25,14 +28,15 @@ palindrome xs = xs == reverse xs
 mergesort :: (a -> a -> Bool) -> [a] -> [a]
 mergesort _ [] = []
 mergesort _ [x] = [x]
-mergesort cmp xs = merge (mergesort cmp left) (mergesort cmp right)
+mergesort cmp xs = 
+  let (l, r) = splitAt (length xs `div` 2) xs
+  in merge (mergesort cmp l) (mergesort cmp r)
   where
-    (left, right) = splitAt (length xs `div` 2) xs
     merge [] ys = ys
     merge xs [] = xs
-    merge (x:xs) (y:ys)
-      | cmp x y   = x : merge xs (y:ys)
-      | otherwise = y : merge (x:xs) ys
+    merge xa@(x:xs') ya@(y:ys')
+      | cmp x y   = x : merge xs' ya
+      | otherwise = y : merge xa ys'
 ------------------------------------------------
 -- runLengthEncode
 ------------------------------------------------
